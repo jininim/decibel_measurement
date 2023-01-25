@@ -15,7 +15,6 @@ import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.*
 
-private const val LOG_TAG = "AudioRecordTest"
 private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
 class MainActivity : AppCompatActivity() {
@@ -68,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         isRecording = false
         job?.cancel()
         recorder?.apply {
-            stop()
+            stop() //녹음 중지
             release()
         }
         Toast.makeText(this@MainActivity,"녹음 중지",Toast.LENGTH_LONG).show()
@@ -87,13 +86,13 @@ class MainActivity : AppCompatActivity() {
 
         //start버튼 클릭
         binding.start.setOnClickListener {
-            startRecording()
-            getDb()
+            startRecording() // 녹음 시작
+            getDb() //데시벨 측정
 
         }
         //end 버튼클릭시
         binding.end.setOnClickListener {
-            stopRecording()
+            stopRecording()// 녹음중지
         }
 
 
@@ -104,12 +103,14 @@ class MainActivity : AppCompatActivity() {
         recorder?.release()
         recorder = null
     }
+    //데시벨 측정 함수
     private fun getDb(){
         recorder?.let {
             isRecording = true
+            //녹음이 중지 될 때 까지 작업 실행 텍스트에 데시벨 값 할당.
             job = CoroutineScope(Dispatchers.Main).launch {
                 while (isRecording) {
-                    delay(1000L)
+                    delay(1000L) // 1초마다 데시벨 측정
                     val amplitude = it.maxAmplitude
                     binding.valueText.text = (20 * kotlin.math.log10(amplitude.toDouble())).toString()
                 }
