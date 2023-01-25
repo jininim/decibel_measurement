@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         //end 버튼클릭시
-        binding.end.setOnClickListener {
+        binding.stop.setOnClickListener {
             stopRecording()// 녹음중지
         }
 
