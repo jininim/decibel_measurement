@@ -4,11 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PackageManagerCompat.LOG_TAG
@@ -27,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private var fileName: String = ""
 
     private  var recorder: MediaRecorder? = null
-    private var db: Double = 0.0
     private var isRecording = false
     private var job: Job? = null
 
@@ -53,18 +50,17 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("RestrictedApi")
     private fun startRecording() {
         recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setOutputFile(fileName)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-
+            setAudioSource(MediaRecorder.AudioSource.MIC)//외부에서 들어오는 소리를 녹음
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)// 출력 파일 포맷을 설정
+            setOutputFile(fileName) // 출력파일 이름 설정
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)// 오디오 인코더를 설정
             try {
-                prepare()
+                prepare() // 초기화
             } catch (e: IOException) {
-                Log.e(LOG_TAG, "prepare() failed")
+                Log.e(LOG_TAG, "prepare() failed") // 실패시
             }
             Toast.makeText(this@MainActivity,"녹음 시작",Toast.LENGTH_LONG).show()
-            start()
+            start() // 녹음 시작
         }
     }
 
@@ -93,7 +89,6 @@ class MainActivity : AppCompatActivity() {
         binding.start.setOnClickListener {
             startRecording()
             getDb()
-            binding.valueText.text = db.toString()
 
         }
         //end 버튼클릭시
@@ -112,11 +107,11 @@ class MainActivity : AppCompatActivity() {
     private fun getDb(){
         recorder?.let {
             isRecording = true
-            job = CoroutineScope(Dispatchers.Default).launch {
+            job = CoroutineScope(Dispatchers.Main).launch {
                 while (isRecording) {
                     delay(1000L)
                     val amplitude = it.maxAmplitude
-                    db = 20 * kotlin.math.log10(amplitude.toDouble())
+                    binding.valueText.text = (20 * kotlin.math.log10(amplitude.toDouble())).toString()
                 }
             }
 
