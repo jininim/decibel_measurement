@@ -84,15 +84,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        //start버튼 클릭
-        binding.start.setOnClickListener {
+        //녹음시작 버튼 클릭
+        binding.startButton.setOnClickListener {
+            binding.stopButton.isEnabled = true
+            binding.startButton.isEnabled = false
             startRecording() // 녹음 시작
             getDb() //데시벨 측정
-
         }
-        //end 버튼클릭시
-        binding.stop.setOnClickListener {
+        //녹음 중지 버튼 클릭
+        binding.stopButton.isEnabled = false
+        binding.stopButton.setOnClickListener {
             stopRecording()// 녹음중지
+            binding.startButton.isEnabled = true
+            binding.stopButton.isEnabled = false
         }
 
 
@@ -110,9 +114,10 @@ class MainActivity : AppCompatActivity() {
             //녹음이 중지 될 때 까지 작업 실행 텍스트에 데시벨 값 할당.
             job = CoroutineScope(Dispatchers.Main).launch {
                 while (isRecording) {
-                    delay(1000L) // 1초마다 데시벨 측정
+                    delay(500L) // 0.5초마다 데시벨 측정
                     val amplitude = it.maxAmplitude
-                    binding.valueText.text = (20 * kotlin.math.log10(amplitude.toDouble())).toString()
+                    binding.textViewDecibel.text = (20 * kotlin.math.log10(amplitude.toDouble())).toInt().toString()
+                    binding.progressBar.progress = (20 * kotlin.math.log10(amplitude.toDouble())).toInt()
                 }
             }
 
