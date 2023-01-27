@@ -13,7 +13,7 @@
         android:layout_marginStart="60dp"
         android:layout_marginBottom="96dp"
         android:backgroundTint="@color/primaryColor"
-        android:text="소음 측정"
+        android:text="데시벨 측정"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
